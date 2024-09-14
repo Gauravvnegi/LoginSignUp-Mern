@@ -23,6 +23,10 @@ app.post('/api/checkUser', async (req, res) => {
         if (!existingUser) {
             return res.status(404).json({ message: 'User not found' });
         }
+        const isPassMatched = await existingUser.comparePassword(password);
+        if(!isPassMatched){
+            return res.status(401).json({ message: 'Password mismatch' });
+        }
         if(existingUser.password === password){
             const payload={
             id:existingUser.id,
@@ -61,6 +65,10 @@ app.post('/api/signup', async (req, res) => {
         });
 
         const saveLoginData = await loginData.save();
+        // const isPassMatched = await existingUser.comparePassword(password);
+        // if(!isPassMatched){
+        //     return res.status(401).json({ message: 'Password mismatch' });
+        // }
         const payload={
             id:saveData.id,
             username: saveLoginData.username
